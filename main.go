@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	entrego "github.com/FergyAlexBray/entreGo/src"
+)
 
 func main() {
-	fmt.Println("EntreGo !")
+	core := entrego.Core{}
+
+	entrego.Parser(&core)
+
+	core.Run()
+
+	entrego.EndMessage(core)
 }
