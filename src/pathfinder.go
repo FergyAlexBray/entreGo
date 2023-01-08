@@ -1,75 +1,68 @@
 package entrego
 
-// Position represents a position on the grid
-type Position struct {
-	row, col int
+type Point struct {
+	X int
+	Y int
 }
 
-// pathfinder finds the shorter path in a 2D slice of integers avoiding objects
-// and returns the next position compared to the start point closer to the destination point
-func Pathfinder(grid [][]int, start, dest Position, avoid []Position) Position {
-	// Create a set of positions that have been visited
-	visited := make(map[Position]struct{})
-	// Create a queue to store the positions to visit
-	queue := []Position{}
-	// Add the start position to the queue
-	queue = append(queue, start)
+func FindShortestPath(grid [][]int, start, end Point) []Point {
+	// create a queue for breadth-first search
+	queue := []Point{start}
 
-	// While there are positions in the queue
+	// keep track of visited cells to avoid loops
+	visited := map[Point]bool{start: true}
+
+	// keep track of the previous cell for each cell
+	// this will allow us to reconstruct the path at the end
+	prev := map[Point]Point{start: Point{-1, -1}}
+
+	// perform breadth-first search
 	for len(queue) > 0 {
-		// Get the first position in the queue
-		pos := queue[0]
+		// get the next point in the queue
+		p := queue[0]
 		queue = queue[1:]
-		// Add the position to the visited set
-		visited[pos] = struct{}{}
-		// If the position is the destination, return it
-		if pos == dest {
-			return pos
+
+		// check if we have reached the end
+		if p == end {
+			break
 		}
 
-		// Get the row and column of the position
-		row, col := pos.row, pos.col
-		// Loop through the neighbors of the position
-		for _, p := range []Position{{row + 1, col}, {row - 1, col}, {row, col + 1}, {row, col - 1}} {
-			// If the neighbor is out of bounds or is an object to avoid, skip it
-			if p.row < 0 || p.col < 0 || p.row >= len(grid) || p.col >= len(grid[0]) {
+		// check all four directions for valid moves
+		for _, dir := range []Point{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
+			next := Point{p.X + dir.X, p.Y + dir.Y}
+
+			// skip out-of-bounds cells and cells that are obstacles
+			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.X][next.Y] == 1 {
 				continue
 			}
-			for _, a := range avoid {
-				if a == p {
-					continue
-				}
+
+			// skip cells that have already been visited
+			if visited[next] {
+				continue
 			}
-			// If the neighbor has not been visited, add it to the queue
-			if _, ok := visited[p]; !ok {
-				queue = append(queue, p)
-			}
+
+			// mark cell as visited and add it to the queue
+			visited[next] = true
+			queue = append(queue, next)
+			prev[next] = p
 		}
 	}
 
-	// If the destination is not reachable, return the start position
-	return start
+	// reconstruct the path from the previous map
+	path := []Point{end}
+	p := end
+	for p != start {
+		p = prev[p]
+		path = append(path, p)
+	}
+
+	// reverse the path to get the start to end order
+	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+		path[i], path[j] = path[j], path[i]
+	}
+
+	return path
 }
-
-// func main() {
-// grid := [][]int{
-// 	{1, 0, 1, 1, 1},
-// 	{1, 1, 1, 0, 1},
-// 	{1, 0, 1, 1, 1},
-// 	{1, 1, 1, 1, 1},
-// 	{1, 1, 1, 1, 1},
-// }
-// start := Position{0, 0}
-// dest := Position{4, 4}
-// avoid := []Position{
-// 	{0, 1},
-// 	{1, 3},
-// 	{2, 1},
-// }
-
-// nextPos := pathfinder(grid, start, dest, avoid)
-// fmt.Printf("Next position: (%d, %d)\n", nextPos.row, nextPos.col)
-// }
 
 // func Pathfinder(SpaceMap [][]int) [][]int {
 // 	goland := [][]int{}
