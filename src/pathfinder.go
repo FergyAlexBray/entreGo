@@ -6,17 +6,15 @@ type Point struct {
 }
 
 func FindShortestPath(grid [][]int, start, end Point) []Point {
-	// create a queue for breadth-first search
 	queue := []Point{start}
 
-	// keep track of visited cells to avoid loops
+	//visited cells
 	visited := map[Point]bool{start: true}
 
-	// keep track of the previous cell for each cell
-	// this will allow us to reconstruct the path at the end
+	// previous cell for each cell
 	prev := map[Point]Point{start: Point{-1, -1}}
 
-	// perform breadth-first search
+	// breadth-first search
 	for len(queue) > 0 {
 		// get the next point in the queue
 		p := queue[0]
@@ -27,11 +25,11 @@ func FindShortestPath(grid [][]int, start, end Point) []Point {
 			break
 		}
 
-		// check all four directions for valid moves
+		// check directions (up, down, left, right)
 		for _, dir := range []Point{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
 			next := Point{p.X + dir.X, p.Y + dir.Y}
 
-			// skip out-of-bounds cells and cells that are obstacles
+			// skip out-of-bounds and obstacles cells
 			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.X][next.Y] == 1 {
 				continue
 			}
