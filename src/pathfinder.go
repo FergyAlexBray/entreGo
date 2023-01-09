@@ -1,18 +1,13 @@
 package entrego
 
-type Point struct {
-	X int
-	Y int
-}
-
-func FindShortestPath(grid [][]int, start, end Point) []Point {
-	queue := []Point{start}
+func FindShortestPath(grid [][]int, start, end Position) []Position {
+	queue := []Position{start}
 
 	//visited cells
-	visited := map[Point]bool{start: true}
+	visited := map[Position]bool{start: true}
 
 	// previous cell for each cell
-	prev := map[Point]Point{start: Point{-1, -1}}
+	prev := map[Position]Position{start: {-1, -1}}
 
 	// breadth-first search
 	for len(queue) > 0 {
@@ -26,8 +21,8 @@ func FindShortestPath(grid [][]int, start, end Point) []Point {
 		}
 
 		// check directions (up, down, left, right)
-		for _, dir := range []Point{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
-			next := Point{p.X + dir.X, p.Y + dir.Y}
+		for _, dir := range []Position{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
+			next := Position{p.X + dir.X, p.Y + dir.Y}
 
 			// skip out-of-bounds and obstacles cells
 			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.X][next.Y] == 1 {
@@ -47,7 +42,7 @@ func FindShortestPath(grid [][]int, start, end Point) []Point {
 	}
 
 	// reconstruct the path from the previous map
-	path := []Point{end}
+	path := []Position{end}
 	p := end
 	for p != start {
 		p = prev[p]
