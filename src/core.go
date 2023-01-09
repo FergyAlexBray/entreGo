@@ -72,6 +72,14 @@ func (c *Core) ForkliftWithParcel(forklift *Forklift) {
 	}
 }
 
+func (c *Core) UnavailableTrucksCounter() {
+	for _, truck := range c.Trucks {
+		if !truck.Available {
+			truck.RemainingTime -= 1
+		}
+	}
+}
+
 func (c *Core) Run() {
 
 	for _, truck := range c.Trucks {
