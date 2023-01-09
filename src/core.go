@@ -81,14 +81,18 @@ func (c *Core) UnavailableTrucksCounter() {
 }
 
 func (c *Core) Run() {
+	globalQuit := make(chan struct{})
+	defer close(globalQuit)
 
 	for _, truck := range c.Trucks {
-		go truck.InitTruck()
+		go truck.InitTruck(globalQuit)
 	}
 
 	c.OrderParcels()
 
 	for i := 0; i < c.Ticks; i++ {
+		c.UnavailableTrucksCounter()
+
 		for _, forklift := range c.Forklifts {
 			if forklift.Content == nil && forklift.TargetParcel == nil {
 				// TODO check if no more parcels
