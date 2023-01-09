@@ -95,7 +95,10 @@ func (c *Core) Run() {
 
 		for _, forklift := range c.Forklifts {
 			if forklift.Content == nil && forklift.TargetParcel == nil {
-				// TODO check if no more parcels
+				if len(c.Parcels) == 0 {
+					// TODO End condition: Show end string
+					return
+				}
 				// Find package
 				forklift.TargetParcel = &c.Parcels[0]
 				c.Parcels = c.Parcels[1:]
