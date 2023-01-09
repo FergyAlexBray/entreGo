@@ -51,9 +51,11 @@ func (c *Core) ForkliftWithoutParcel(forklift *Forklift) {
 	if forklift.IsNextToTarget(forklift.TargetParcel.Position) {
 		// Take package
 		forklift.TakeParcel()
+		fmt.Println("Take Parcel")
 	} else {
 		// Move forklift to package
 		forklift.MoveTowardsParcel(c)
+		fmt.Println("Move")
 	}
 }
 
@@ -61,10 +63,12 @@ func (c *Core) ForkliftWithParcel(forklift *Forklift) {
 	if forklift.IsNextToTarget(forklift.TargetTruck.Position) {
 		// Load package into truck
 		forklift.LoadTruck()
+		fmt.Println("Load truck")
 	} else {
 		// Move forklift to truck
 		// TODO Check if truck is still available
 		forklift.MoveTowardsTruck(c)
+		fmt.Println("Move")
 	}
 }
 
@@ -77,36 +81,32 @@ func (c *Core) Run() {
 	c.OrderParcels()
 
 	for i := 0; i < c.Ticks; i++ {
-		// Available forklift
-		forklift, available := c.FindEmptyForklift()
-
-		if available {
-			// TODO check if no more parcels
-			// Find package
-			forklift.TargetParcel = &c.Parcels[0]
-			c.Parcels = c.Parcels[1:]
-		}
-
-		// TODO Loop over all forklifts
-		forklift = &c.Forklifts[0]
-
-		if forklift.Content == nil {
-			c.ForkliftWithoutParcel(forklift)
-			continue
-		} else {
-			if forklift.TargetTruck == nil {
-				truck, available := c.FindAvailableTruck()
-				if available {
-					forklift.TargetTruck = truck
-				} else {
-					fmt.Println("Waiting...")
-					// TODO Go to next forklift and test if available without counting a tick
-					continue
-				}
+		for _, forklift := range c.Forklifts {
+			if forklift.Content == nil && forklift.TargetParcel == nil {
+				// TODO check if no more parcels
+				// Find package
+				forklift.TargetParcel = &c.Parcels[0]
+				c.Parcels = c.Parcels[1:]
 			}
 
-			c.ForkliftWithParcel(forklift)
-			continue
+			if forklift.Content == nil {
+				c.ForkliftWithoutParcel(&forklift)
+				continue
+			} else {
+				if forklift.TargetTruck == nil {
+					truck, available := c.FindAvailableTruck()
+					if available {
+						forklift.TargetTruck = truck
+					} else {
+						fmt.Println("Waiting...")
+						// TODO Go to next forklift and test if available without counting a tick
+						continue
+					}
+				}
+
+				c.ForkliftWithParcel(&forklift)
+				continue
+			}
 		}
 	}
 }
