@@ -89,15 +89,21 @@ func (c *Core) UnavailableTrucksCounter() {
 	}
 }
 
-func (c *Core) Run() {
+func (c *Core) Init() chan struct{} {
 	globalQuit := make(chan struct{})
-	defer close(globalQuit)
 
 	for _, truck := range c.Trucks {
 		go truck.InitTruck(globalQuit)
 	}
 
 	c.OrderParcels()
+
+	return globalQuit
+}
+
+func (c *Core) Run() {
+	globalQuit := c.Init()
+	defer close(globalQuit)
 
 	for i := 0; i < c.Ticks; i++ {
 		c.UnavailableTrucksCounter()
