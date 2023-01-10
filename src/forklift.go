@@ -25,10 +25,12 @@ func (f *Forklift) move(c *Core, target Position, targetType int) {
 }
 
 func (f *Forklift) MoveTowardsParcel(c *Core) {
+	// TODO: Set the right targetType number
 	f.move(c, f.TargetParcel.Position, 1)
 }
 
 func (f *Forklift) MoveTowardsTruck(c *Core) {
+	// TODO: Set the right targetType number
 	f.move(c, f.TargetTruck.Position, 2)
 }
 

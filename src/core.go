@@ -2,7 +2,6 @@ package entrego
 
 import (
 	"fmt"
-	"sort"
 )
 
 const (
@@ -18,12 +17,6 @@ type Core struct {
 	Trucks    []Truck
 	Forklifts []Forklift
 	Ticks     int
-}
-
-func (c *Core) OrderParcels() {
-	sort.SliceStable(c.Parcels, func(i, j int) bool {
-		return c.Parcels[i].Weight < c.Parcels[j].Weight
-	})
 }
 
 func (c Core) FindEmptyForklift() (*Forklift, bool) {
