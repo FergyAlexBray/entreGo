@@ -35,7 +35,7 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 	totalWeight := t.totalWeight()
 	sumWeight := totalWeight + loadPackage.Parcel.Weight
 
-	if totalWeight >= t.MaxWeight || sumWeight >= t.MaxWeight {
+	if totalWeight >= t.MaxWeight || sumWeight > t.MaxWeight {
 		t.Available = false
 		t.RemainingTime = t.Delay
 
@@ -43,6 +43,11 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 	}
 
 	t.Load = append(t.Load, loadPackage.Parcel)
+
+	if sumWeight == t.MaxWeight {
+		t.Available = false
+		t.RemainingTime = t.Delay
+	}
 
 	return true
 }

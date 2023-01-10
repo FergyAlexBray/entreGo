@@ -16,6 +16,7 @@ type Forklift struct {
 }
 
 func (f *Forklift) move(c *Core, target Position, targetType int) {
+	// TODO: Only call when necessary, not every lap
 	nextPosition := FindShortestPath(c.SpaceMap, f.Position, target)[0]
 
 	c.SpaceMap[f.Position.X][f.Position.Y] = 0 // Number representing empty
@@ -51,6 +52,7 @@ func (f *Forklift) LoadTruck() {
 		f.Content = nil
 		f.TargetTruck = nil
 	} else {
+		// TODO: Better handling of error loading
 		fmt.Println("Waiting...")
 	}
 }
