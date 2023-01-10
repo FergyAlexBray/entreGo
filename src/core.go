@@ -28,7 +28,7 @@ func (c *Core) OrderParcels() {
 
 func (c Core) FindEmptyForklift() (*Forklift, bool) {
 	for _, forklift := range c.Forklifts {
-		if forklift.Content == nil {
+		if forklift.Content == nil && forklift.TargetParcel == nil {
 			return &forklift, true
 		}
 	}
@@ -36,9 +36,13 @@ func (c Core) FindEmptyForklift() (*Forklift, bool) {
 	return nil, false
 }
 
-func (c Core) FindAvailableTruck() (*Truck, bool) {
+func (c Core) FindAvailableTruck(parcel Parcel) (*Truck, bool) {
 	for _, truck := range c.Trucks {
-		// TODO Check if the forklift package enters in the truck
+		totalWeight := truck.totalWeight()
+		if (totalWeight + parcel.Weight) >= truck.MaxWeight {
+			continue
+		}
+
 		if truck.Available {
 			return &truck, true
 		}
@@ -59,6 +63,19 @@ func (c *Core) ForkliftWithoutParcel(forklift *Forklift) {
 	}
 }
 
+func (c Core) FindTargetTruck(forklift *Forklift) bool {
+
+	truck, available := c.FindAvailableTruck(*forklift.Content)
+	if available {
+		forklift.TargetTruck = truck
+	} else {
+		fmt.Println("Waiting...")
+		return false
+	}
+
+	return true
+}
+
 func (c *Core) ForkliftWithParcel(forklift *Forklift) {
 	if forklift.IsNextToTarget(forklift.TargetTruck.Position) {
 		// Load package into truck
@@ -66,7 +83,6 @@ func (c *Core) ForkliftWithParcel(forklift *Forklift) {
 		fmt.Println("Load truck")
 	} else {
 		// Move forklift to truck
-		// TODO Check if truck is still available
 		forklift.MoveTowardsTruck(c)
 		fmt.Println("Move")
 	}
@@ -109,12 +125,7 @@ func (c *Core) Run() {
 				continue
 			} else {
 				if forklift.TargetTruck == nil {
-					truck, available := c.FindAvailableTruck()
-					if available {
-						forklift.TargetTruck = truck
-					} else {
-						fmt.Println("Waiting...")
-						// TODO Go to next forklift and test if available without counting a tick
+					if res := c.FindTargetTruck(&forklift); !res {
 						continue
 					}
 				}

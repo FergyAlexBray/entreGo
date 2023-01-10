@@ -14,6 +14,7 @@ type Truck struct {
 type LoadPackage struct {
 	TruckName string
 	Parcel    *Parcel
+	Loaded    bool
 }
 
 func (t Truck) totalWeight() int {
@@ -27,6 +28,10 @@ func (t Truck) totalWeight() int {
 }
 
 func (t *Truck) load(loadPackage LoadPackage) bool {
+	if !t.Available {
+		return false
+	}
+
 	totalWeight := t.totalWeight()
 	sumWeight := totalWeight + loadPackage.Parcel.Weight
 
@@ -34,7 +39,6 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 		t.Available = false
 		t.RemainingTime = t.Delay
 
-		// TODO Communicate error loading
 		return false
 	}
 
@@ -49,7 +53,8 @@ func (truck *Truck) InitTruck(globalQuit chan struct{}) {
 	for {
 		select {
 		case loadPackage := <-truck.LoadTruck:
-			truck.load(loadPackage)
+			res := truck.load(loadPackage)
+			truck.LoadTruck <- LoadPackage{Loaded: res}
 		case <-globalQuit:
 			return
 		}

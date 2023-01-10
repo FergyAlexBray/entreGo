@@ -1,5 +1,7 @@
 package entrego
 
+import "fmt"
+
 type Position struct {
 	X int
 	Y int
@@ -41,9 +43,14 @@ func (f *Forklift) LoadTruck() {
 		Parcel:    f.Content,
 	}
 
-	// TODO Check if the truck was correctly loaded
-	f.Content = nil
-	f.TargetTruck = nil
+	res := <-f.TargetTruck.LoadTruck
+
+	if res.Loaded {
+		f.Content = nil
+		f.TargetTruck = nil
+	} else {
+		fmt.Println("Waiting...")
+	}
 }
 
 func (f *Forklift) IsNextToTarget(target Position) bool {
