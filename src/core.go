@@ -8,6 +8,7 @@ const (
 )
 
 type Core struct {
+	Rules     GameRules
 	SpaceMap  [][]int
 	Parcels   []Parcel
 	Trucks    []Truck
