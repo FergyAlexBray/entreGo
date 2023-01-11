@@ -8,10 +8,12 @@ const (
 )
 
 type Core struct {
-	SpaceMap  [][]int
-	Parcels   []Parcel
-	Trucks    []Truck
-	Forklifts []Forklift
+	Rules       GameRules
+	SpaceMap    [][]int
+	Parcels     []Parcel
+	Trucks      []Truck
+	Forklifts   []Forklift
+	Identifiers SpaceMapIdentifiers
 }
 
 func (c *Core) Run() {
