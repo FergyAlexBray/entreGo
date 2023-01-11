@@ -44,6 +44,7 @@ func main() {
 	camion := []entrego.Camion{
 		{"camion_b", "WAITING", "200/1000"},
 		{"camion_lol", "GONE", "0/1000"},
+		{"camion_b", "WAITING", "200/1000"},
 	}
 
 	entrego.Display(10, transpalette, camion)

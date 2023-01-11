@@ -30,26 +30,22 @@ func Display(tour int, transpalette []Transpalette, camion []Camion) {
 
 	for i := 0; i < tour; i++ {
 		fmt.Printf("tour %d\n", i+1)
-
-		if i < len(transpalette) && transpalette[i].Name != "" {
-			fmt.Printf(transpalette[i].Name + " ")
-		}
-
-		if i < len(transpalette) && transpalette[i].State != "" {
-			switch transpalette[i].State {
+		for _, t := range transpalette {
+			fmt.Printf(t.Name + " ")
+			switch t.State {
 			case "GO":
-				fmt.Printf(transpalette[i].State + " " + transpalette[i].Coordinates + "\n")
+				fmt.Printf(t.State + " " + t.Coordinates + "\n")
 			case "WAIT":
-				fmt.Printf(transpalette[i].State + "\n")
+				fmt.Printf(t.State + "\n")
 			case "TAKE":
-				fmt.Printf(transpalette[i].State + " " + transpalette[i].Colis + " " + transpalette[i].Color + "\n")
+				fmt.Printf(t.State + " " + t.Colis + " " + t.Color + "\n")
 			case "LEAVE":
-				fmt.Printf(transpalette[i].State + " " + transpalette[i].Colis + " " + transpalette[i].Color + "\n")
+				fmt.Printf(t.State + " " + t.Colis + " " + t.Color + "\n")
 			}
 		}
-
-		if i < len(camion) && camion[i].Name != "" {
-			fmt.Printf(camion[i].Name + " " + camion[i].State + " " + camion[i].Weight + "\n\n")
+		for _, c := range camion {
+			fmt.Printf(c.Name + " " + c.State + " " + c.Weight + "\n")
 		}
+		fmt.Printf("\n")
 	}
 }
