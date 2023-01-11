@@ -27,10 +27,26 @@ func main() {
 	path := entrego.FindShortestPath(grid, start, end)
 
 	fmt.Println("Shortest path:")
-	//fmt.Printf("(%d)\n", path[1])
-	for _, p := range path {
-		fmt.Printf("(%d, %d)\n", p.X, p.Y)
+
+	//print next path
+	fmt.Printf("(%d)\n", path[1])
+
+	//print all path
+	// for _, p := range path {
+	// 	fmt.Printf("(%d, %d)\n", p.X, p.Y)
+	// }
+
+	transpalette := []entrego.Transpalette{
+		{"transpalette_2", "GO", "[2,2]", "colis2", "BLUE"},
+		{"transpalette_2", "TAKE", "[2,2]", "colis2", "GREEN"},
+		{"transpalette_2", "WAIT", "", "", ""},
 	}
+	camion := []entrego.Camion{
+		{"camion_b", "WAITING", "200/1000"},
+		{"camion_lol", "GONE", "0/1000"},
+	}
+
+	entrego.Display(10, transpalette, camion)
 
 	entrego.Parser(&core)
 
