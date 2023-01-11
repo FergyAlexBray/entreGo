@@ -82,19 +82,19 @@ func setParcels(parcels *[]Parcel, lines *[]string) {
 }
 
 func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
-	index := [2]int{0, 1}
-	index[0], _ = strconv.Atoi(splittedData[1])
-	index[1], _ = strconv.Atoi(splittedData[2])
+	x, _ := strconv.Atoi(splittedData[1])
+	y, _ := strconv.Atoi(splittedData[2])
+	position := Position{X: x, Y: y}
 	weight, _ := strconv.Atoi(splittedData[3])
-	newParcel := Parcel{Name: splittedData[0], Weight: weight, Position: index}
+	newParcel := Parcel{Name: splittedData[0], Weight: weight, Position: position}
 	*parcels = append(*parcels, newParcel)
 }
 
 func addForkliftToForklifts(forklifts *[]Forklift, splittedData []string) {
-	index := [2]int{0, 1}
-	index[0], _ = strconv.Atoi(splittedData[1])
-	index[1], _ = strconv.Atoi(splittedData[2])
-	newForklift := Forklift{Name: splittedData[0], Position: index}
+	x, _ := strconv.Atoi(splittedData[1])
+	y, _ := strconv.Atoi(splittedData[2])
+	position := Position{X: x, Y: y}
+	newForklift := Forklift{Name: splittedData[0], Position: position}
 	*forklifts = append(*forklifts, newForklift)
 }
 
@@ -112,12 +112,12 @@ func setForklifts(forklifts *[]Forklift, lines *[]string) {
 }
 
 func addTruckToTrucks(trucks *[]Truck, splittedData []string) {
-	index := [2]int{0, 1}
-	index[0], _ = strconv.Atoi(splittedData[1])
-	index[1], _ = strconv.Atoi(splittedData[2])
+	x, _ := strconv.Atoi(splittedData[1])
+	y, _ := strconv.Atoi(splittedData[2])
+	position := Position{X: x, Y: y}
 	maxWeight, _ := strconv.Atoi(splittedData[3])
 	delay, _ := strconv.Atoi(splittedData[4])
-	newTruck := Truck{Name: splittedData[0], Position: index, MaxWeight: maxWeight, Delay: delay}
+	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: maxWeight, Delay: delay}
 	*trucks = append(*trucks, newTruck)
 }
 
@@ -143,18 +143,18 @@ func setCoreDataFromFileLines(c *Core, lines []string) {
 
 func addTrucksToSpaceMap(c *Core) {
 	for _, truck := range c.Trucks {
-		c.SpaceMap[truck.Position[1]][truck.Position[0]] = c.Identifiers.Truck
+		c.SpaceMap[truck.Position.Y][truck.Position.X] = c.Identifiers.Truck
 	}
 }
 func addForkliftsToSpaceMap(c *Core) {
 	for _, forklift := range c.Forklifts {
-		c.SpaceMap[forklift.Position[1]][forklift.Position[0]] = c.Identifiers.Forklift
+		c.SpaceMap[forklift.Position.Y][forklift.Position.X] = c.Identifiers.Forklift
 	}
 }
 
 func addParcelsToSpaceMap(c *Core) {
 	for _, parcel := range c.Parcels {
-		c.SpaceMap[parcel.Position[1]][parcel.Position[0]] = c.Identifiers.Parcel
+		c.SpaceMap[parcel.Position.Y][parcel.Position.X] = c.Identifiers.Parcel
 	}
 }
 
