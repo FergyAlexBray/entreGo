@@ -83,9 +83,9 @@ func setParcels(parcels *[]Parcel, lines *[]string) {
 
 func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
 	index := [2]int{0, 1}
-	index[0], _ = strconv.Atoi(splittedData[2])
-	index[1], _ = strconv.Atoi(splittedData[3])
-	weight, _ := strconv.Atoi(splittedData[1])
+	index[0], _ = strconv.Atoi(splittedData[1])
+	index[1], _ = strconv.Atoi(splittedData[2])
+	weight, _ := strconv.Atoi(splittedData[3])
 	newParcel := Parcel{Name: splittedData[0], Weight: weight, Position: index}
 	*parcels = append(*parcels, newParcel)
 }
@@ -141,9 +141,50 @@ func setCoreDataFromFileLines(c *Core, lines []string) {
 	setTrucks(&c.Trucks, &lines)
 }
 
-func Parser(c *Core, args []string) {
+func addTrucksToSpaceMap(c *Core) {
+	for _, truck := range c.Trucks {
+		c.SpaceMap[truck.Position[1]][truck.Position[0]] = c.Identifiers.Truck
+	}
+}
+func addForkliftsToSpaceMap(c *Core) {
+	for _, forklift := range c.Forklifts {
+		c.SpaceMap[forklift.Position[1]][forklift.Position[0]] = c.Identifiers.Forklift
+	}
+}
 
-	fmt.Println(args[1])
+func addParcelsToSpaceMap(c *Core) {
+	for _, parcel := range c.Parcels {
+		c.SpaceMap[parcel.Position[1]][parcel.Position[0]] = c.Identifiers.Parcel
+	}
+}
+
+func populateSpaceMap(c *Core) {
+	createSpaceMapBase(c)
+	addTrucksToSpaceMap(c)
+	addParcelsToSpaceMap(c)
+	addForkliftsToSpaceMap(c)
+}
+
+func createSpaceMapBase(c *Core) {
+	c.SpaceMap = make([][]int, 0)
+	for i := 0; i < c.Rules.Length; i++ {
+		tmp := make([]int, 0)
+		for j := 0; j < c.Rules.Width; j++ {
+			tmp = append(tmp, c.Identifiers.Space)
+		}
+		c.SpaceMap = append(c.SpaceMap, tmp)
+	}
+}
+
+func setIdentifiers(c *Core) {
+	c.Identifiers.Truck = 3
+	c.Identifiers.Parcel = 1
+	c.Identifiers.Forklift = 2
+	c.Identifiers.Space = 0
+}
+
+func Parser(c *Core, args []string) {
+	setIdentifiers(c)
 
 	if len(args) < 1 {
 		return
@@ -152,4 +193,6 @@ func Parser(c *Core, args []string) {
 	lines := readFileIntoArray(args[1])
 	validateSpecifiedData(lines)
 	setCoreDataFromFileLines(c, lines)
+	populateSpaceMap(c)
+	fmt.Println(c.SpaceMap)
 }
