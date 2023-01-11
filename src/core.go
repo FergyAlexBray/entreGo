@@ -18,7 +18,7 @@ type Core struct {
 	Trucks      []Truck
 	Forklifts   []Forklift
 	Identifiers SpaceMapIdentifiers
-	Ticks     int
+	Ticks       int
 }
 
 func (c Core) FindEmptyForklift() (*Forklift, bool) {
@@ -110,15 +110,15 @@ func (c *Core) Run() {
 	for i := 0; i < c.Ticks; i++ {
 		c.UnavailableTrucksCounter()
 
-		for _, forklift := range c.Forklifts {
+		for j, forklift := range c.Forklifts {
 			if forklift.Content == nil && forklift.TargetParcel == nil {
 				if len(c.Parcels) == 0 {
 					// TODO End condition: Show end string
 					return
 				}
 				// Find package
-				forklift.TargetParcel = &c.Parcels[0]
-				c.Parcels = c.Parcels[1:]
+				forklift.TargetParcel = &c.Parcels[j+1]
+				//c.Parcels = c.Parcels[1:]
 			}
 
 			if forklift.Content == nil {

@@ -81,12 +81,17 @@ func setParcels(parcels *[]Parcel, lines *[]string) {
 	}
 }
 
+func getWeightFromColor(color string) int {
+	fmt.Println(color)
+	return 100
+}
+
 func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
 	x, _ := strconv.Atoi(splittedData[1])
 	y, _ := strconv.Atoi(splittedData[2])
 	position := Position{X: x, Y: y}
-	weight, _ := strconv.Atoi(splittedData[3])
-	newParcel := Parcel{Name: splittedData[0], Weight: weight, Position: position}
+	weight := getWeightFromColor(splittedData[3])
+	newParcel := Parcel{Name: splittedData[0], Color: splittedData[3], Weight: weight, Position: position}
 	*parcels = append(*parcels, newParcel)
 }
 
@@ -134,8 +139,13 @@ func setTrucks(trucks *[]Truck, lines *[]string) {
 	}
 }
 
+func setTicks(ticks *int, rules *GameRules) {
+	*ticks = rules.Rounds
+}
+
 func setCoreDataFromFileLines(c *Core, lines []string) {
 	setSizeAndNumberOfRound(&c.Rules, &lines)
+	setTicks(&c.Ticks, &c.Rules)
 	setParcels(&c.Parcels, &lines)
 	setForklifts(&c.Forklifts, &lines)
 	setTrucks(&c.Trucks, &lines)
@@ -194,5 +204,9 @@ func Parser(c *Core, args []string) {
 	validateSpecifiedData(lines)
 	setCoreDataFromFileLines(c, lines)
 	populateSpaceMap(c)
-	fmt.Println(c.SpaceMap)
+	fmt.Println(c.SpaceMap[0])
+	fmt.Println(c.SpaceMap[1])
+	fmt.Println(c.SpaceMap[2])
+	fmt.Println(c.SpaceMap[3])
+	fmt.Println(c.SpaceMap[4])
 }

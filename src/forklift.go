@@ -17,12 +17,12 @@ type Forklift struct {
 
 func (f *Forklift) move(c *Core, target Position, targetType int) {
 	// TODO: Only call when necessary, not every lap
-	nextPosition := FindShortestPath(c.SpaceMap, f.Position, target)[0]
+	nextPositions := FindShortestPath(c.SpaceMap, f.Position, target)
 
 	c.SpaceMap[f.Position.X][f.Position.Y] = 0 // Number representing empty
-	c.SpaceMap[nextPosition.X][nextPosition.Y] = targetType
+	c.SpaceMap[nextPositions[1].X][nextPositions[1].Y] = targetType
 
-	f.Position = nextPosition
+	f.Position = nextPositions[1]
 }
 
 func (f *Forklift) MoveTowardsParcel(c *Core) {
@@ -58,11 +58,11 @@ func (f *Forklift) LoadTruck() {
 }
 
 func (f *Forklift) IsNextToTarget(target Position) bool {
-	if f.Position.X == target.X+1 || f.Position.X == target.X-1 {
+	if (f.Position.Y == target.Y && f.Position.X == target.X+1) || (f.Position.Y == target.Y && f.Position.X == target.X-1) {
 		return true
 	}
 
-	if f.Position.Y == target.Y+1 || f.Position.Y == target.Y-1 {
+	if (f.Position.X == target.X && f.Position.Y == target.Y+1) || (f.Position.X == target.X && f.Position.Y == target.Y-1) {
 		return true
 	}
 
