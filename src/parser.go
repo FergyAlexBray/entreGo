@@ -122,7 +122,8 @@ func addTruckToTrucks(trucks *[]Truck, splittedData []string) {
 	position := Position{X: x, Y: y}
 	maxWeight, _ := strconv.Atoi(splittedData[3])
 	delay, _ := strconv.Atoi(splittedData[4])
-	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: maxWeight, Delay: delay}
+	loadTruck := make(chan LoadPackage)
+	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: maxWeight, Delay: delay, Available: true, LoadTruck: loadTruck}
 	*trucks = append(*trucks, newTruck)
 }
 

@@ -53,8 +53,6 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 }
 
 func (truck *Truck) InitTruck(globalQuit chan struct{}) {
-	truck.LoadTruck = make(chan LoadPackage)
-
 	for {
 		select {
 		case loadPackage := <-truck.LoadTruck:
