@@ -31,6 +31,11 @@ func (c Core) FindEmptyForklift() (*Forklift, bool) {
 	return nil, false
 }
 
+func (c Core) FindExistingSpaceMapIndex(p Position) bool {
+	cellExists := p.X >= 0 && p.Y >= 0 && p.X < c.Rules.Width && p.Y < c.Rules.Length
+	return cellExists
+}
+
 func (c Core) FindAvailableTruck(parcel Parcel) (*Truck, bool) {
 	for _, truck := range c.Trucks {
 		totalWeight := truck.totalWeight()
