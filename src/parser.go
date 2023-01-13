@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -42,12 +41,12 @@ func fileToArrayByLines(sc *bufio.Scanner) []string {
 }
 
 func setSizeOfMap(rules *GameRules, splittedData []string) {
-	rules.Length, _ = strconv.Atoi(splittedData[0])
-	rules.Width, _ = strconv.Atoi(splittedData[1])
+	rules.Length = convertStringToNumber(splittedData[0])
+	rules.Width = convertStringToNumber(splittedData[1])
 }
 
 func setNumberOfRounds(rules *GameRules, splittedData []string) {
-	rules.Rounds, _ = strconv.Atoi(splittedData[2])
+	rules.Rounds = convertStringToNumber(splittedData[2])
 }
 
 func setSizeAndNumberOfRound(rules *GameRules, lines *[]string) {
@@ -97,16 +96,12 @@ func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
 }
 
 func getParcelPosition(splittedData []string) Position {
-	x, _ := strconv.Atoi(splittedData[1])
-	y, _ := strconv.Atoi(splittedData[2])
-	position := Position{X: x, Y: y}
+	position := Position{X: convertStringToNumber(splittedData[1]), Y: convertStringToNumber(splittedData[2])}
 	return position
 }
 
 func addForkliftToForklifts(forklifts *[]Forklift, splittedData []string) {
-	x, _ := strconv.Atoi(splittedData[1])
-	y, _ := strconv.Atoi(splittedData[2])
-	position := Position{X: x, Y: y}
+	position := Position{X: convertStringToNumber(splittedData[1]), Y: convertStringToNumber(splittedData[2])}
 	newForklift := Forklift{Name: splittedData[0], Position: position}
 	*forklifts = append(*forklifts, newForklift)
 }
@@ -125,13 +120,9 @@ func setForklifts(forklifts *[]Forklift, lines *[]string) {
 }
 
 func addTruckToTrucks(trucks *[]Truck, splittedData []string) {
-	x, _ := strconv.Atoi(splittedData[1])
-	y, _ := strconv.Atoi(splittedData[2])
-	position := Position{X: x, Y: y}
-	maxWeight, _ := strconv.Atoi(splittedData[3])
-	delay, _ := strconv.Atoi(splittedData[4])
+	position := Position{X: convertStringToNumber(splittedData[1]), Y: convertStringToNumber(splittedData[2])}
 	loadTruck := make(chan LoadPackage)
-	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: maxWeight, Delay: delay, Available: true, LoadTruck: loadTruck}
+	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: convertStringToNumber(splittedData[3]), Delay: convertStringToNumber(splittedData[4]), Available: true, LoadTruck: loadTruck}
 	*trucks = append(*trucks, newTruck)
 }
 
@@ -162,18 +153,30 @@ func setCoreDataFromFileLines(c *Core, lines []string) {
 
 func addTrucksToSpaceMap(c *Core) {
 	for _, truck := range c.Trucks {
-		c.SpaceMap[truck.Position.Y][truck.Position.X] = c.Identifiers.Truck
+		if c.FindExistingSpaceMapIndex(truck.Position) {
+			c.SpaceMap[truck.Position.Y][truck.Position.X] = c.Identifiers.Truck
+		} else {
+			log.Fatal("Error: Invalid position specified for Truck.")
+		}
 	}
 }
 func addForkliftsToSpaceMap(c *Core) {
 	for _, forklift := range c.Forklifts {
-		c.SpaceMap[forklift.Position.Y][forklift.Position.X] = c.Identifiers.Forklift
+		if c.FindExistingSpaceMapIndex(forklift.Position) {
+			c.SpaceMap[forklift.Position.Y][forklift.Position.X] = c.Identifiers.Forklift
+		} else {
+			log.Fatal("Error: Invalid position specified for forklift.")
+		}
 	}
 }
 
 func addParcelsToSpaceMap(c *Core) {
 	for _, parcel := range c.Parcels {
-		c.SpaceMap[parcel.Position.Y][parcel.Position.X] = c.Identifiers.Parcel
+		if c.FindExistingSpaceMapIndex(parcel.Position) {
+			c.SpaceMap[parcel.Position.Y][parcel.Position.X] = c.Identifiers.Parcel
+		} else {
+			log.Fatal("Error: Invalid position specified for parcel.")
+		}
 	}
 }
 
