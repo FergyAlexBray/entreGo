@@ -82,17 +82,31 @@ func setParcels(parcels *[]Parcel, lines *[]string) {
 }
 
 func getWeightFromColor(color string) int {
-	fmt.Println(color)
-	return 100
+	switch color {
+	case "YELLOW", "yellow":
+		return 100
+	case "GREEN", "green":
+		return 200
+	case "BLUE", "blue":
+		return 500
+	default:
+		log.Fatal("Invalid weight for parcel specified.")
+		return 0
+	}
 }
 
 func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
-	x, _ := strconv.Atoi(splittedData[1])
-	y, _ := strconv.Atoi(splittedData[2])
-	position := Position{X: x, Y: y}
+	position := getParcelPosition(splittedData)
 	weight := getWeightFromColor(splittedData[3])
 	newParcel := Parcel{Name: splittedData[0], Color: splittedData[3], Weight: weight, Position: position}
 	*parcels = append(*parcels, newParcel)
+}
+
+func getParcelPosition(splittedData []string) Position {
+	x, _ := strconv.Atoi(splittedData[1])
+	y, _ := strconv.Atoi(splittedData[2])
+	position := Position{X: x, Y: y}
+	return position
 }
 
 func addForkliftToForklifts(forklifts *[]Forklift, splittedData []string) {
