@@ -2,6 +2,7 @@ package entrego
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -11,12 +12,12 @@ func readFileIntoArray(filePath string) []string {
 	file, err := os.Open(filePath)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("😱", err)
 	}
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("😱", err)
 		}
 	}(file)
 
@@ -50,7 +51,7 @@ func setSizeAndNumberOfRound(rules *GameRules, lines *[]string) {
 		setNumberOfRounds(rules, splittedData)
 		*lines = linesTemp[1:]
 	} else {
-		log.Fatal("invalid rules")
+		log.Fatal("😱 invalid rules")
 	}
 }
 
@@ -76,7 +77,7 @@ func getWeightFromColor(color string) int {
 	case "BLUE", "blue":
 		return 500
 	default:
-		log.Fatal("Invalid weight for parcel specified.")
+		log.Fatal("😱 Invalid weight for parcel specified.")
 		return 0
 	}
 }
@@ -149,7 +150,7 @@ func addTrucksToSpaceMap(c *Core) {
 		if c.FindExistingSpaceMapIndex(truck.Position) {
 			c.SpaceMap[truck.Position.Y][truck.Position.X] = TRUCK
 		} else {
-			log.Fatal("Error: Invalid position specified for Truck.")
+			log.Fatal("😱 Error: Invalid position specified for Truck.")
 		}
 	}
 }
@@ -158,7 +159,7 @@ func addForkliftsToSpaceMap(c *Core) {
 		if c.FindExistingSpaceMapIndex(forklift.Position) {
 			c.SpaceMap[forklift.Position.Y][forklift.Position.X] = FORKLIFT
 		} else {
-			log.Fatal("Error: Invalid position specified for forklift.")
+			log.Fatal("😱 Error: Invalid position specified for forklift.")
 		}
 	}
 }
@@ -168,7 +169,7 @@ func addParcelsToSpaceMap(c *Core) {
 		if c.FindExistingSpaceMapIndex(parcel.Position) {
 			c.SpaceMap[parcel.Position.Y][parcel.Position.X] = PARCEL
 		} else {
-			log.Fatal("Error: Invalid position specified for parcel.")
+			log.Fatal("😱 Error: Invalid position specified for parcel.")
 		}
 	}
 }
@@ -191,12 +192,15 @@ func createSpaceMapBase(c *Core) {
 	}
 }
 
-func Parser(c *Core, args []string) {
-	if len(args) < 1 {
-		return
+func Parser(c *Core, args []string) bool {
+	if len(args) < 2 {
+		fmt.Println("😱 No configuration file linked")
+		return false
 	}
 
 	lines := readFileIntoArray(args[1])
 	setCoreDataFromFileLines(c, lines)
 	populateSpaceMap(c)
+
+	return true
 }

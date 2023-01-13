@@ -9,7 +9,9 @@ import (
 func main() {
 	core := entrego.Core{}
 
-	entrego.Parser(&core, os.Args)
+	ok := entrego.Parser(&core, os.Args)
 
-	core.Run()
+	if ok {
+		core.Run()
+	}
 }
