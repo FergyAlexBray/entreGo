@@ -7,12 +7,6 @@ import (
 	"strings"
 )
 
-type Rules struct {
-	width  int
-	length int
-	rounds int
-}
-
 func readFileIntoArray(filePath string) []string {
 	file, err := os.Open(filePath)
 
