@@ -137,7 +137,6 @@ func (c *Core) Run() {
 	defer close(globalQuit)
 
 	for i := 0; i < c.Ticks; i++ {
-		fmt.Println()
 		if c.isWareHouseEmpty() {
 			fmt.Println("😎")
 			return
@@ -177,6 +176,7 @@ func (c *Core) Run() {
 		}
 
 		DisplayTruckStates(*c)
+		fmt.Println()
 	}
 
 	fmt.Println("🙂")
