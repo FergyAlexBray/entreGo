@@ -1,6 +1,8 @@
 package entrego
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Position struct {
 	X int
@@ -19,19 +21,19 @@ func (f *Forklift) move(c *Core, target Position, targetType int) {
 	// TODO: Only call when necessary, not every lap
 	nextPositions := FindShortestPath(c.SpaceMap, f.Position, target)
 
-	c.SpaceMap[f.Position.X][f.Position.Y] = 0 // Number representing empty
-	c.SpaceMap[nextPositions[1].X][nextPositions[1].Y] = targetType
+	c.SpaceMap[f.Position.Y][f.Position.X] = 0 // Number representing empty
+	c.SpaceMap[nextPositions[1].Y][nextPositions[1].X] = targetType
 
 	f.Position = nextPositions[1]
+
+	fmt.Println(f.Name, "GO", CoordinatesToString(f.Position))
 }
 
 func (f *Forklift) MoveTowardsParcel(c *Core) {
-	// TODO: Set the right targetType number
-	f.move(c, f.TargetParcel.Position, 1)
+	f.move(c, f.TargetParcel.Position, 2)
 }
 
 func (f *Forklift) MoveTowardsTruck(c *Core) {
-	// TODO: Set the right targetType number
 	f.move(c, f.TargetTruck.Position, 2)
 }
 
@@ -49,11 +51,11 @@ func (f *Forklift) LoadTruck() {
 	res := <-f.TargetTruck.LoadTruck
 
 	if res.Loaded {
+		fmt.Println(f.Name, "LEAVE", f.Content.Name, f.Content.Color)
 		f.Content = nil
 		f.TargetTruck = nil
 	} else {
-		// TODO: Better handling of error loading
-		fmt.Println("Waiting...")
+		fmt.Println(f.Name, "WAIT")
 	}
 }
 

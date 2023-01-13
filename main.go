@@ -1,8 +1,9 @@
 package main
 
 import (
-	entrego "github.com/FergyAlexBray/entreGo/src"
 	"os"
+
+	entrego "github.com/FergyAlexBray/entreGo/src"
 )
 
 func main() {
@@ -11,6 +12,4 @@ func main() {
 	entrego.Parser(&core, os.Args)
 
 	core.Run()
-
-	entrego.EndMessage()
 }

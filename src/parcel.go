@@ -6,6 +6,7 @@ type Parcel struct {
 	Name     string
 	Weight   int
 	Position Position
+	Color    string
 }
 
 func (c *Core) OrderParcels() {

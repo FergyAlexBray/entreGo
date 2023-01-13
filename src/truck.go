@@ -1,5 +1,7 @@
 package entrego
 
+import "fmt"
+
 type Truck struct {
 	Name          string
 	Position      Position
@@ -36,6 +38,7 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 	sumWeight := totalWeight + loadPackage.Parcel.Weight
 
 	if totalWeight >= t.MaxWeight || sumWeight > t.MaxWeight {
+		fmt.Println("Max weight")
 		t.Available = false
 		t.RemainingTime = t.Delay
 
@@ -45,6 +48,7 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 	t.Load = append(t.Load, loadPackage.Parcel)
 
 	if sumWeight == t.MaxWeight {
+		fmt.Println("Max weight")
 		t.Available = false
 		t.RemainingTime = t.Delay
 	}
