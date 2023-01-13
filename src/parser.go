@@ -62,12 +62,6 @@ func setSizeAndNumberOfRound(rules *GameRules, lines *[]string) {
 	}
 }
 
-func validateSpecifiedData(lines []string) {
-	for index, element := range lines {
-		fmt.Println("At index", index, "value is", element)
-	}
-}
-
 func setParcels(parcels *[]Parcel, lines *[]string) {
 	linesTemp := *lines
 	for index, element := range linesTemp {
@@ -81,13 +75,32 @@ func setParcels(parcels *[]Parcel, lines *[]string) {
 	}
 }
 
+func getWeightFromColor(color string) int {
+	switch color {
+	case "YELLOW", "yellow":
+		return 100
+	case "GREEN", "green":
+		return 200
+	case "BLUE", "blue":
+		return 500
+	default:
+		log.Fatal("Invalid weight for parcel specified.")
+		return 0
+	}
+}
+
 func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
+	position := getParcelPosition(splittedData)
+	weight := getWeightFromColor(splittedData[3])
+	newParcel := Parcel{Name: splittedData[0], Color: splittedData[3], Weight: weight, Position: position}
+	*parcels = append(*parcels, newParcel)
+}
+
+func getParcelPosition(splittedData []string) Position {
 	x, _ := strconv.Atoi(splittedData[1])
 	y, _ := strconv.Atoi(splittedData[2])
 	position := Position{X: x, Y: y}
-	weight, _ := strconv.Atoi(splittedData[3])
-	newParcel := Parcel{Name: splittedData[0], Weight: weight, Position: position}
-	*parcels = append(*parcels, newParcel)
+	return position
 }
 
 func addForkliftToForklifts(forklifts *[]Forklift, splittedData []string) {
@@ -117,7 +130,8 @@ func addTruckToTrucks(trucks *[]Truck, splittedData []string) {
 	position := Position{X: x, Y: y}
 	maxWeight, _ := strconv.Atoi(splittedData[3])
 	delay, _ := strconv.Atoi(splittedData[4])
-	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: maxWeight, Delay: delay}
+	loadTruck := make(chan LoadPackage)
+	newTruck := Truck{Name: splittedData[0], Position: position, MaxWeight: maxWeight, Delay: delay, Available: true, LoadTruck: loadTruck}
 	*trucks = append(*trucks, newTruck)
 }
 
@@ -134,8 +148,13 @@ func setTrucks(trucks *[]Truck, lines *[]string) {
 	}
 }
 
+func setTicks(ticks *int, rules *GameRules) {
+	*ticks = rules.Rounds
+}
+
 func setCoreDataFromFileLines(c *Core, lines []string) {
 	setSizeAndNumberOfRound(&c.Rules, &lines)
+	setTicks(&c.Ticks, &c.Rules)
 	setParcels(&c.Parcels, &lines)
 	setForklifts(&c.Forklifts, &lines)
 	setTrucks(&c.Trucks, &lines)
@@ -191,8 +210,11 @@ func Parser(c *Core, args []string) {
 	}
 
 	lines := readFileIntoArray(args[1])
-	validateSpecifiedData(lines)
 	setCoreDataFromFileLines(c, lines)
 	populateSpaceMap(c)
-	fmt.Println(c.SpaceMap)
+	fmt.Println(c.SpaceMap[0])
+	fmt.Println(c.SpaceMap[1])
+	fmt.Println(c.SpaceMap[2])
+	fmt.Println(c.SpaceMap[3])
+	fmt.Println(c.SpaceMap[4])
 }

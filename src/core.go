@@ -18,7 +18,7 @@ type Core struct {
 	Trucks      []Truck
 	Forklifts   []Forklift
 	Identifiers SpaceMapIdentifiers
-	Ticks     int
+	Ticks       int
 }
 
 func (c Core) FindEmptyForklift() (*Forklift, bool) {
@@ -46,7 +46,7 @@ func (c Core) FindAvailableTruck(parcel Parcel) (*Truck, bool) {
 	return nil, false
 }
 
-func (c *Core) ForkliftWithoutParcel(forklift *Forklift) {
+func (c *Core) ForkliftWithoutParcel(forklift *Forklift) *Forklift {
 	if forklift.IsNextToTarget(forklift.TargetParcel.Position) {
 		// Take package
 		forklift.TakeParcel()
@@ -56,22 +56,23 @@ func (c *Core) ForkliftWithoutParcel(forklift *Forklift) {
 		forklift.MoveTowardsParcel(c)
 		fmt.Println("Move")
 	}
+	return forklift
 }
 
-func (c Core) FindTargetTruck(forklift *Forklift) bool {
+func (c Core) FindTargetTruck(forklift *Forklift) (bool, *Forklift) {
 
 	truck, available := c.FindAvailableTruck(*forklift.Content)
 	if available {
 		forklift.TargetTruck = truck
 	} else {
 		fmt.Println("Waiting...")
-		return false
+		return false, forklift
 	}
 
-	return true
+	return true, forklift
 }
 
-func (c *Core) ForkliftWithParcel(forklift *Forklift) {
+func (c *Core) ForkliftWithParcel(forklift *Forklift) *Forklift {
 	if forklift.IsNextToTarget(forklift.TargetTruck.Position) {
 		// Load package into truck
 		forklift.LoadTruck()
@@ -81,6 +82,7 @@ func (c *Core) ForkliftWithParcel(forklift *Forklift) {
 		forklift.MoveTowardsTruck(c)
 		fmt.Println("Move")
 	}
+	return forklift
 }
 
 func (c *Core) UnavailableTrucksCounter() {
@@ -110,28 +112,34 @@ func (c *Core) Run() {
 	for i := 0; i < c.Ticks; i++ {
 		c.UnavailableTrucksCounter()
 
-		for _, forklift := range c.Forklifts {
+		for j, forklift := range c.Forklifts[:] {
 			if forklift.Content == nil && forklift.TargetParcel == nil {
 				if len(c.Parcels) == 0 {
 					// TODO End condition: Show end string
 					return
 				}
 				// Find package
-				forklift.TargetParcel = &c.Parcels[0]
+				if len(c.Parcels) > 1 {
+					forklift.TargetParcel = &c.Parcels[j+1]
+				} else {
+					forklift.TargetParcel = &c.Parcels[j]
+				}
+
 				c.Parcels = c.Parcels[1:]
 			}
 
 			if forklift.Content == nil {
-				c.ForkliftWithoutParcel(&forklift)
+				c.Forklifts[j] = *c.ForkliftWithoutParcel(&forklift)
 				continue
 			} else {
 				if forklift.TargetTruck == nil {
-					if res := c.FindTargetTruck(&forklift); !res {
+					res, updatedForklift := c.FindTargetTruck(&forklift)
+					c.Forklifts[j] = *updatedForklift
+					if !res {
 						continue
 					}
 				}
-
-				c.ForkliftWithParcel(&forklift)
+				c.Forklifts[j] = *c.ForkliftWithParcel(&forklift)
 				continue
 			}
 		}

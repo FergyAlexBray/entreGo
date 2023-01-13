@@ -1,6 +1,6 @@
 package entrego
 
-func FindShortestPath(grid [][]int, start, end Position) []Position {
+func FindShortestPath(grid [][]int, start Position, end Position) []Position {
 	queue := []Position{start}
 
 	//visited cells
@@ -25,7 +25,7 @@ func FindShortestPath(grid [][]int, start, end Position) []Position {
 			next := Position{p.X + dir.X, p.Y + dir.Y}
 
 			// skip out-of-bounds and obstacles cells
-			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.X][next.Y] == 1 {
+			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.X][next.Y] == 2 {
 				continue
 			}
 
