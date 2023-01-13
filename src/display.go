@@ -2,6 +2,6 @@ package entrego
 
 import "fmt"
 
-func EndMessage(c Core) {
+func EndMessage() {
 	fmt.Println("EntreGo !")
 }

@@ -2,16 +2,9 @@ package entrego
 
 import "sort"
 
-var Colors = map[string]int{
-	"BLUE":   500,
-	"GREEN":  200,
-	"YELLOW": 100,
-}
-
 type Parcel struct {
 	Name     string
 	Weight   int
-	Color    string
 	Position Position
 }
 

@@ -91,7 +91,7 @@ func getWeightFromColor(color string) int {
 func appendParcelToParcels(parcels *[]Parcel, splittedData []string) {
 	position := getParcelPosition(splittedData)
 	weight := getWeightFromColor(splittedData[3])
-	newParcel := Parcel{Name: splittedData[0], Color: splittedData[3], Weight: weight, Position: position}
+	newParcel := Parcel{Name: splittedData[0], Weight: weight, Position: position}
 	*parcels = append(*parcels, newParcel)
 }
 
