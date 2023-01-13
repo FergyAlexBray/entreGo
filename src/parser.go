@@ -62,12 +62,6 @@ func setSizeAndNumberOfRound(rules *GameRules, lines *[]string) {
 	}
 }
 
-func validateSpecifiedData(lines []string) {
-	for index, element := range lines {
-		fmt.Println("At index", index, "value is", element)
-	}
-}
-
 func setParcels(parcels *[]Parcel, lines *[]string) {
 	linesTemp := *lines
 	for index, element := range linesTemp {
@@ -216,7 +210,6 @@ func Parser(c *Core, args []string) {
 	}
 
 	lines := readFileIntoArray(args[1])
-	validateSpecifiedData(lines)
 	setCoreDataFromFileLines(c, lines)
 	populateSpaceMap(c)
 	fmt.Println(c.SpaceMap[0])

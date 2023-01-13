@@ -119,8 +119,13 @@ func (c *Core) Run() {
 					return
 				}
 				// Find package
-				forklift.TargetParcel = &c.Parcels[j+1]
-				//c.Parcels = c.Parcels[1:]
+				if len(c.Parcels) > 1 {
+					forklift.TargetParcel = &c.Parcels[j+1]
+				} else {
+					forklift.TargetParcel = &c.Parcels[j]
+				}
+
+				c.Parcels = c.Parcels[1:]
 			}
 
 			if forklift.Content == nil {
