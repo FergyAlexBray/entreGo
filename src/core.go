@@ -7,18 +7,18 @@ import (
 const (
 	EMPTY int = 0
 	PARCEL
-	TRUCK
 	FORKLIFT
+	TRUCK
+	TARGET_PARCEL
 )
 
 type Core struct {
-	Rules       GameRules
-	SpaceMap    [][]int
-	Parcels     []Parcel
-	Trucks      []Truck
-	Forklifts   []Forklift
-	Identifiers SpaceMapIdentifiers
-	Ticks       int
+	Rules     GameRules
+	SpaceMap  [][]int
+	Parcels   []Parcel
+	Trucks    []Truck
+	Forklifts []Forklift
+	Ticks     int
 }
 
 func (c *Core) FindEmptyForklift() (*Forklift, bool) {
@@ -64,6 +64,7 @@ func (c *Core) ForkliftWithoutParcel(forklift *Forklift) {
 	if forklift.IsNextToTarget(forklift.TargetParcel.Position) {
 		// Take package
 		forklift.TakeParcel()
+		c.SpaceMap[forklift.Content.Position.Y][forklift.Content.Position.X] = EMPTY
 		fmt.Println(forklift.Name, "TAKE", forklift.Content.Name, forklift.Content.Color)
 	} else {
 		// Move forklift to package
@@ -75,7 +76,6 @@ func (c *Core) FindTargetTruck(forklift *Forklift) bool {
 
 	truck, available := c.FindAvailableTruck(*forklift.Content)
 	if available {
-		// c.SpaceMap[truck.Position.X][truck.Position.Y] = 6
 		forklift.TargetTruck = truck
 	} else {
 		fmt.Println(forklift.Name, "WAIT")
@@ -148,8 +148,16 @@ func (c *Core) Run() {
 		for j, forklift := range c.Forklifts {
 			if forklift.Content == nil && forklift.TargetParcel == nil {
 				// Find package
+				if len(c.Parcels) == 0 {
+					if forklift.IsNextToTarget(forklift.StartPosition) {
+						fmt.Println(forklift.Name, "WAIT")
+					} else {
+						c.Forklifts[j].MoveToStart(c)
+					}
+					continue
+				}
 				parcel := &c.Parcels[0]
-				c.SpaceMap[parcel.Position.Y][parcel.Position.X] = 5
+				c.SpaceMap[parcel.Position.Y][parcel.Position.X] = TARGET_PARCEL
 				c.Forklifts[j].TargetParcel = parcel
 				c.Parcels = c.Parcels[1:]
 			}
@@ -169,7 +177,6 @@ func (c *Core) Run() {
 		}
 
 		DisplayTruckStates(*c)
-		// DisplayMap(*c)
 	}
 
 	fmt.Println("🙂")

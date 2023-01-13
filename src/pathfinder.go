@@ -25,7 +25,7 @@ func FindShortestPath(grid [][]int, start Position, end Position) []Position {
 			next := Position{p.X + dir.X, p.Y + dir.Y}
 
 			// skip out-of-bounds and obstacles cells
-			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.X][next.Y] == 2 || grid[next.X][next.Y] == 1 {
+			if next.X < 0 || next.X >= len(grid) || next.Y < 0 || next.Y >= len(grid[0]) || grid[next.Y][next.X] == 2 || grid[next.Y][next.X] == 1 {
 				continue
 			}
 

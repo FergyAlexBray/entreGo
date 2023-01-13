@@ -10,18 +10,24 @@ type Position struct {
 }
 
 type Forklift struct {
-	Name         string
-	Position     Position
-	Content      *Parcel
-	TargetTruck  *Truck
-	TargetParcel *Parcel
+	Name          string
+	StartPosition Position
+	Position      Position
+	Content       *Parcel
+	TargetTruck   *Truck
+	TargetParcel  *Parcel
 }
 
 func (f *Forklift) move(c *Core, target Position, targetType int) {
 	// TODO: Only call when necessary, not every lap
 	nextPositions := FindShortestPath(c.SpaceMap, f.Position, target)
 
-	c.SpaceMap[f.Position.Y][f.Position.X] = 0 // Number representing empty
+	if len(nextPositions) <= 2 {
+		fmt.Println(f.Name, "WAIT")
+		return
+	}
+
+	c.SpaceMap[f.Position.Y][f.Position.X] = EMPTY // Number representing empty
 	c.SpaceMap[nextPositions[1].Y][nextPositions[1].X] = targetType
 
 	f.Position = nextPositions[1]
@@ -29,12 +35,16 @@ func (f *Forklift) move(c *Core, target Position, targetType int) {
 	fmt.Println(f.Name, "GO", CoordinatesToString(f.Position))
 }
 
+func (f *Forklift) MoveToStart(c *Core) {
+	f.move(c, f.StartPosition, FORKLIFT)
+}
+
 func (f *Forklift) MoveTowardsParcel(c *Core) {
-	f.move(c, f.TargetParcel.Position, 2)
+	f.move(c, f.TargetParcel.Position, FORKLIFT)
 }
 
 func (f *Forklift) MoveTowardsTruck(c *Core) {
-	f.move(c, f.TargetTruck.Position, 2)
+	f.move(c, f.TargetTruck.Position, FORKLIFT)
 }
 
 func (f *Forklift) TakeParcel() {

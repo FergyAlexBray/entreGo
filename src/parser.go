@@ -2,7 +2,6 @@ package entrego
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -102,7 +101,7 @@ func getParcelPosition(splittedData []string) Position {
 
 func addForkliftToForklifts(forklifts *[]Forklift, splittedData []string) {
 	position := Position{X: convertStringToNumber(splittedData[1]), Y: convertStringToNumber(splittedData[2])}
-	newForklift := Forklift{Name: splittedData[0], Position: position}
+	newForklift := Forklift{Name: splittedData[0], Position: position, StartPosition: position}
 	*forklifts = append(*forklifts, newForklift)
 }
 
@@ -154,7 +153,7 @@ func setCoreDataFromFileLines(c *Core, lines []string) {
 func addTrucksToSpaceMap(c *Core) {
 	for _, truck := range c.Trucks {
 		if c.FindExistingSpaceMapIndex(truck.Position) {
-			c.SpaceMap[truck.Position.Y][truck.Position.X] = c.Identifiers.Truck
+			c.SpaceMap[truck.Position.Y][truck.Position.X] = TRUCK
 		} else {
 			log.Fatal("Error: Invalid position specified for Truck.")
 		}
@@ -163,7 +162,7 @@ func addTrucksToSpaceMap(c *Core) {
 func addForkliftsToSpaceMap(c *Core) {
 	for _, forklift := range c.Forklifts {
 		if c.FindExistingSpaceMapIndex(forklift.Position) {
-			c.SpaceMap[forklift.Position.Y][forklift.Position.X] = c.Identifiers.Forklift
+			c.SpaceMap[forklift.Position.Y][forklift.Position.X] = FORKLIFT
 		} else {
 			log.Fatal("Error: Invalid position specified for forklift.")
 		}
@@ -173,7 +172,7 @@ func addForkliftsToSpaceMap(c *Core) {
 func addParcelsToSpaceMap(c *Core) {
 	for _, parcel := range c.Parcels {
 		if c.FindExistingSpaceMapIndex(parcel.Position) {
-			c.SpaceMap[parcel.Position.Y][parcel.Position.X] = c.Identifiers.Parcel
+			c.SpaceMap[parcel.Position.Y][parcel.Position.X] = PARCEL
 		} else {
 			log.Fatal("Error: Invalid position specified for parcel.")
 		}
@@ -192,22 +191,13 @@ func createSpaceMapBase(c *Core) {
 	for i := 0; i < c.Rules.Length; i++ {
 		tmp := make([]int, 0)
 		for j := 0; j < c.Rules.Width; j++ {
-			tmp = append(tmp, c.Identifiers.Space)
+			tmp = append(tmp, EMPTY)
 		}
 		c.SpaceMap = append(c.SpaceMap, tmp)
 	}
 }
 
-func setIdentifiers(c *Core) {
-	c.Identifiers.Truck = 3
-	c.Identifiers.Parcel = 1
-	c.Identifiers.Forklift = 2
-	c.Identifiers.Space = 0
-}
-
 func Parser(c *Core, args []string) {
-	setIdentifiers(c)
-
 	if len(args) < 1 {
 		return
 	}
@@ -215,9 +205,4 @@ func Parser(c *Core, args []string) {
 	lines := readFileIntoArray(args[1])
 	setCoreDataFromFileLines(c, lines)
 	populateSpaceMap(c)
-	fmt.Println(c.SpaceMap[0])
-	fmt.Println(c.SpaceMap[1])
-	fmt.Println(c.SpaceMap[2])
-	fmt.Println(c.SpaceMap[3])
-	fmt.Println(c.SpaceMap[4])
 }
