@@ -12,5 +12,5 @@ func main() {
 
 	core.Run()
 
-	entrego.EndMessage(core)
+	entrego.EndMessage()
 }

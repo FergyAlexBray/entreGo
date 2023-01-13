@@ -52,12 +52,12 @@ func (t *Truck) load(loadPackage LoadPackage) bool {
 	return true
 }
 
-func (truck *Truck) InitTruck(globalQuit chan struct{}) {
+func (t *Truck) InitTruck(globalQuit chan struct{}) {
 	for {
 		select {
-		case loadPackage := <-truck.LoadTruck:
-			res := truck.load(loadPackage)
-			truck.LoadTruck <- LoadPackage{Loaded: res}
+		case loadPackage := <-t.LoadTruck:
+			res := t.load(loadPackage)
+			t.LoadTruck <- LoadPackage{Loaded: res}
 		case <-globalQuit:
 			return
 		}
